@@ -32,6 +32,7 @@ use ansi_term::{ANSIStrings, Style};
 use fs::{Dir, File};
 use fs::feature::ignore::IgnoreCache;
 use fs::feature::git::GitCache;
+use fs::get_mounts::get_mount_points;
 use options::{Options, Vars};
 pub use options::vars;
 pub use options::Misfire;
@@ -43,6 +44,13 @@ mod options;
 mod output;
 mod style;
 
+lazy_static! {
+    // A global cache of mount points to enable lookups for each directory
+    static ref MOUNT_POINTS: Vec<(PathBuf, String, String)> = {
+        let mount_points = get_mount_points().unwrap();
+        mount_points        
+    };
+}
 
 /// The main program wrapper.
 pub struct Exa<'args, 'w, W: Write + 'w> {
